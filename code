@@ -1,0 +1,101 @@
+Controller Class
+@RestController
+@RequestMapping("/patients")
+public class PatientController {
+    
+    private final PatientService patientService;
+
+    public PatientController(PatientService patientService) {
+        this.patientService = patientService;
+    }
+
+    @PostMappingj
+    public ResponseEntity<Patient> addPatient(@RequestBody Patient patient) {
+        return ResponseEntity.ok(patientService.addPatient(patient));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Patient> getPatientById(@PathVariable Long id) {
+        return ResponseEntity.ok(patientService.getPatientById(id));
+    }
+
+    @GetMapping
+    public ResponseEntity<List<Patient>> getAllPatients() {
+        return ResponseEntity.ok(patientService.getAllPatients());
+    }
+}
+
+Service Class
+@Service
+public class PatientService {
+
+    private final PatientRepository patientRepository;
+
+    public PatientService(PatientRepository patientRepository) {
+        this.patientRepository = patientRepository;
+    }
+
+    public Patient addPatient(Patient patient) {
+        return patientRepository.save(patient);
+    }
+
+    public Patient getPatientById(Long id) {
+        return patientRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Patient not found with ID: " + id));
+    }
+
+    public List<Patient> getAllPatients() {
+        return patientRepository.findAll();
+    }
+}
+
+Repository Interface
+@Repository
+public interface PatientRepository extends JpaRepository<Patient, Long> {
+}
+
+Entity Class
+@Entity
+public class Patient {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private String name;
+    private int age;
+    private String diagnosis;
+
+    // Getters and Setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
+    }
+
+    public String getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
+    }
+}
